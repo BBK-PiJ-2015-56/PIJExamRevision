@@ -1,5 +1,5 @@
 package java8stuff;
 
 public interface TwoStringPredicate{
-	public String firstStringBetter(String str1, String str2);
+	public Boolean firstStringBetter(String str1, String str2);
 }
