@@ -1,5 +1,6 @@
 package java8stuff;
 
+@FunctionalInterface
 public interface TwoStringPredicate{
-	public Boolean firstStringBetter(String str1, String str2);
+	boolean firstStringBetter(String str1, String str2);
 }
