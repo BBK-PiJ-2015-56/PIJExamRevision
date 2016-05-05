@@ -9,15 +9,7 @@ public class NumberUtil{
 	public static List<Double> randomNumberList(int size){
 		//see http://www.leveluplunch.com/java/examples/java-util-stream-doublestream-example/
 		
-		List<Double> numbers = DoubleStream.iterate(Math.random())
-
-		DoubleStream.Builder b = DoubleStream.builder();
-		
-		// !!!!!!!!!!!!!!!!!!! NEED TO LOOK INTO HOW TO DO WITHOUT LOOP!!!!!!!!!!!!!!!!
-		while(b.size() < size){
-			b.accept(Math.random());
-		}
-		DoubleStream d = b.build();
-		return d.boxed().collect(Collectors.toList());
+		return = DoubleStream.iterate(?? need seed?? and unaryoperator  Math.random())
+									.limit(size).collect(Collectors.toList());
 	}
 }
