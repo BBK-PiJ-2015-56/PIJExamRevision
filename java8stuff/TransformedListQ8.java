@@ -2,6 +2,7 @@ package java8stuff;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
  
 
 //q8
@@ -23,18 +24,19 @@ public class TransformedListQ8{
 	public static void main(String args[]){
 		List<String> words = Arrays.asList("Junior", "Nigel", "Brian", "Ben");
 		List<Integer> numbers = Arrays.asList( 2, 4, 6, 8, 10);
+
+		//test the method that uses streams
+		List<String>  wordsTrans = Utilities.transformedListWithStream(words, s -> s + "!");
+		System.out.println("Here is the transformed string list, with stream " + wordsTrans);
+		List<Integer> numbersDoubled = Utilities.transformedListWithStream(numbers, n -> 2 * n);
+		System.out.println("transformed number list, with stream, should be (4,8,...): " + numbersDoubled);
 		
-		
-		List<String> wordsTrans = Utilities.transformedListNoStream(words, s -> s + "!");
+		/*
+		wordsTrans = Utilities.transformedListNoStream(words, s -> s + "!");
 		System.out.println("Here is the transformed string list, no stream " + wordsTrans);
 		
-		List<Integer> numbersDoubled = Utilities.transformedListNoStream(numbers, n -> 2 * n);
+		numbersDoubled = Utilities.transformedListNoStream(numbers, n -> 2 * n);
 		System.out.println("Here is the transformed number list, no stream " + numbersDoubled);
-		/*
-		wordsTrans = Utilities.transformedListWithStream(words, s -> s + "!");
-		System.out.println("Here is the transformed string list, with stream " + wordsTrans);
-		numbersDoubled2 = Utilities.transformedListWithStream(numbers, n -> 2 * n);
-		System.out.println("Here is the transformed number list, with stream " + numbersDoubled);
 		*/
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
  
 
@@ -35,11 +36,11 @@ public class Utilities{
 		return list.stream().filter(pred).collect(Collectors.toList());
 	}
 	
-	public static <T> List<T> transformedListNoStream(List<T> list, Predicate<T> pred){
-		return list;
+	public static <T,R> List<R> transformedListWithStream(List<T> list, Function<T,R> f){
+		return list.stream().map(f::apply).collect(Collectors.toList());
 	}
-	
-	public static <T> List<T> transformedListWithStream(List<T> list, Predicate<T> pred){
-		return list;
+	public static <T,R> List<R> transformedListNoStream(List<T> list, Function<T,R> f){
+		//still need to implement without a stream - I did it on paper so no time to do now
+		return list.stream().map(e -> f.apply(e)).collect(Collectors.toList());
 	}
 }
