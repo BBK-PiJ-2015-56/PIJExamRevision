@@ -14,7 +14,9 @@ public class MainDay20{
 		List<Double> numbers = NumberUtil.randomNumberList(8);
 		System.out.println("size of list should be 8: " + numbers.size());
 		System.out.print("list: ");
-		numbers.forEach(n -> System.out.print(n));
+		numbers.forEach(n -> System.out.print(n + " "));
+		
+		//NEED TO DO Q12,13,14!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	}
 
 }
