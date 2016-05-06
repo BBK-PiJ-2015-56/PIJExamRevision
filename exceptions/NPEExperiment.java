@@ -1,7 +1,14 @@
 package exceptions;
 
 public class NPEExperiment{
+	
+	int a;
 	public static void main(String args[]){
+		NPEExperiment exp = new NPEExperiment();
+		exp.run();
+	}
+	
+	public void run(){
 		/*
 		int n;
 		System.out.println(n);
@@ -14,20 +21,23 @@ public class NPEExperiment{
 		int p = null;
 		System.out.println(p);
 		This says     error: incompatible types null cannot ne converted to int.
-		Q) Is this a runtime exception? which one? could we throw it and catch it?
+		Q) Is this a r
+		
+		untime exception? which one? could we throw it and catch it?
 		*/
 		/*
 		Integer q = null;
 		System.out.println(q);
-		This works and prints   null
+		This works and prints 
+		null
 		*/
 		//NOW TRY BY CALLING A METHOD, AND THROWING AN NPE OURSELVES IF NULL
 		
-		/*
-		int a;
+		
+		//int a;
 		testMethodA(a);
-		WE CANNOT DO THIS - IT HAS NOT BEEN INITIALISED SO THE METHOD CALL WILL NOT COMPILE
-		*/
+		//WE CANNOT DO THIS - IT HAS NOT BEEN INITIALISED SO THE METHOD CALL WILL NOT COMPILE
+		
 		/*
 		Integer b = null;
 		testMethodB(b);
@@ -43,21 +53,21 @@ public class NPEExperiment{
 			and variable values of it's own instance
 		*/
 		
-		Integer c = null;
-		testMethodC(c);
+		//Integer c = null;
+		//testMethodC(c);
 	}
 	
 	public void testMethodA(int a){
 		System.out.println("Method A called and now printing the int..." + a);
 	}
 	
-	public void testMethodB(Integer b){
-		System.out.println("Method B called and now printing the int..." + b);
-	}
+	//public void testMethodB(Integer b){
+	//	System.out.println("Method B called and now printing the int..." + b);
+	//}
 	// make it static - see note above
-	public static void testMethodC(Integer c){
-		System.out.println("Method C called and now printing the int..." + c);
-	}
+	//public static void testMethodC(Integer c){
+		//System.out.println("Method C called and now printing the int..." + c);
+	//}
 }
 
 /*
