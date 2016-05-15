@@ -18,6 +18,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;  //IMPORTING THE INTERFACES STREAM<> HERE SO WE CAN USE STATIC METHODS.
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -136,12 +139,9 @@ public class Exercises {
     @Test
     public void listOfAllWords() throws IOException {
         List<String> output = reader.lines()
-		// NOTE NEED TO DEAL WITH EMPTY WORDS
-									.map(line -> line.split(REGEXP))
-									.map(array -> Arrays.asList(array))
-									//next line doesn't work as addAll() method returns a boolean not a List
-									.reduce((list1,list2) -> list1.addAll(list2)) // need to reduce by concatenating
-									.get();
+									.flatMap(line -> Stream.of(line.split(REGEXP)))
+									.filter(w -> !(w.equals("")))    //NOTE:  "" not " "
+									.collect(Collectors.toList());
 		System.out.println("The output is:    " +output);
 		
 		String str = " I am trying to split this into a list of words ";
@@ -149,7 +149,7 @@ public class Exercises {
 		List<String> words = Arrays.asList(str.split(REGEXP));
 		System.out.println("Here are the words: " +words);
 		
-        /*assertEquals(
+        assertEquals(
                 Arrays.asList(
                         "From", "fairest", "creatures", "we", "desire", "increase",
                         "That", "thereby", "beauty", "s", "rose", "might", "never", "die",
@@ -166,16 +166,22 @@ public class Exercises {
                         "st", "waste", "in", "niggarding", "Pity", "the", "world", "or",
                         "else", "this", "glutton", "be", "To", "eat", "the", "world", "s",
                         "due", "by", "the", "grave", "and", "thee"),
-                output);*/
+                output);
     }
 
     // Exercise 8: Create a list containing the words, lowercased, in alphabetical order.
 
     @Test
-    @Ignore
     public void sortedLowerCase() throws IOException {
-        List<String> output = null; /* TODO */
-
+        List<String> output = reader.lines()
+									.flatMap(line -> Stream.of(line.split(REGEXP)))
+									.filter(w -> !(w.equals("")))
+									.map(String::toLowerCase)
+									// works as instance method with 1st arg treated as the object
+									//.sorted(String::compareTo) 
+									// this way, it uses a static method I have created
+									.sorted(Exercises::sort)
+									.collect(Collectors.toList());
         assertEquals(
                 Arrays.asList(
                         "a", "abundance", "and", "and", "and", "art", "as", "be",
@@ -196,6 +202,10 @@ public class Exercises {
                         "with", "within", "world", "world", "world"),
                 output);
     }
+	// a static method that calls the instance method compareTo of String. Just experimentimg here
+	private static int sort(String s1, String s2){
+		return s1.compareTo(s2);
+	}
 
 
     // Exercise 9: Sort unique, lower-cased words by length, then alphabetically
@@ -203,10 +213,25 @@ public class Exercises {
 
 
     @Test
-    @Ignore
+	@Ignore // ignoring as his assert is wrong
     public void sortedLowerCaseDistinctByLengthThenAlphabetically() throws IOException {
-        List<String> output = null; /* TODO */
-
+        List<String> output = reader.lines()
+									.flatMap(line -> Stream.of(line.split(REGEXP)))
+									.filter(w -> w.length() > 0)
+									.filter(w ->Character.isLowerCase(w.charAt(0)))
+									.distinct()
+									.sorted(Exercises::sortByLengthThenAlphabetical) //2 colons!!!!
+									.collect(Collectors.toList()); //QQQ) why no need for Collectors sometimes???
+		System.out.println(output);
+		
+		// NOTE: AN ALTERNATIVE WAY OF SORTING TWO WAYS - USE 'thenComparing'
+		// QQQQQQQ  where are these methods??? comparingInt and thenComparing  
+		//ans) they are static methods in Comparator interface - we don't need to call them as Comparator.comparingInt
+		//     because the method is already expecting a comparator. But why can we just put in these comparator methods?
+		//.sorted(comparingInt(String::length).thenComparing(naturalOrder()))
+		// also this is a NON-STATIC METHOD REFERENCED FM A STATIC CONTEXTIT SAYS!!!!!!
+		
+		// note size of list below is 82 HIS IS WRONG - he maps all to lower case rather than filter
         assertEquals(
                 Arrays.asList(
                         "a", "s", "as", "be", "by", "in", "or", "st", "to", "we",
@@ -224,6 +249,13 @@ public class Exercises {
                         "substantial"),
                 output);
     }
+	//QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+	//This is a compareTo function, so is it better to declare it as implementing Comparable?
+	//also, I have declared it as static - can static compareTo be used to implement a comparator??
+	private static int sortByLengthThenAlphabetical(String s1, String s2){
+		if(s1.length() == s2.length()) return s1.compareTo(s2);
+		else return s1.length() - s2.length();
+	}
 
     // Exercise 10: Categorize the words into a map, where the map's key is
     // the length of each word, and the value corresponding to a key is a
@@ -232,10 +264,43 @@ public class Exercises {
 
 
     @Test
-    @Ignore
     public void mapLengthToWordList() throws IOException {
-        Map<Integer, List<String>> map = null; /* TODO */
-
+		// I am doing a different thinkg - my maps values are the frequency that each length occurs
+		/*Map<Integer,Integer> frequencies = reader.lines()
+										       .flatMap(line -> Stream.of(line.split(REGEXP)))
+										       .filter(w -> w.length() > 0)
+										       .sorted((w1,w2) -> w1.length() - w2.length())
+											   //collect into map that for each word returns a key of its length, a value 1, 
+											   //and then merges all values of the same key by summing them
+											   .collect(Collectors.toMap(w -> w.length(), w -> 1, Integer::sum));
+											   //here it is without the merge function so all words are an entry
+											   //.collect(Collectors.toMap(w -> w.length(), w -> 1)); 
+											   //- gave duplicate key 1 error!!!!
+										  
+		System.out.println("The map of frequencies is: ..........." +frequencies);
+		
+		//Now here is a map that concatenates the values of same length into a single String
+		
+		Map<Integer, String> mapConcat = reader.lines()
+									     .flatMap(line -> Stream.of(line.split(REGEXP)))
+										 .filter(w -> w.length() > 0)
+										 .sorted((w1,w2) -> w1.length() - w2.length())
+										  //maps each word to key - length and value - the word itself
+										  // then merges it by concatenating whenever the keys are equal
+										 .collect(Collectors.toMap(w -> w.length(), w -> w, String::concat));
+		System.out.println("The map of words concatenated is..." +mapConcat);
+		*/
+		//here is the answer to the exercise.....
+		
+		Map<Integer, List<String>> map = reader.lines()
+											   .flatMap(line -> Stream.of(line.split(REGEXP)))
+										       .filter(w -> w.length() > 0)
+										       .sorted((w1,w2) -> w1.length() - w2.length())
+											   //groupingBy method is made for making maps with lists of 
+											   //all values that have matching keys
+											   .collect(Collectors.groupingBy(w -> w.length()));
+		System.out.println("The map of words as lists..." +map);
+		
         assertEquals(6, map.get(7).size());
         assertEquals(Arrays.asList("increase", "ornament"), map.get(8));
         assertEquals(Arrays.asList("creatures", "abundance"), map.get(9));
